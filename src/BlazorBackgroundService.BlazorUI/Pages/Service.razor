@@ -1,0 +1,37 @@
+@page "/Service"
+@inject CustomBackgroundService _customBackgroundService
+
+<h3>Service</h3>
+
+<p><div hidden="@HideIsRunning">Running</div></p>
+
+<button name="startButton" class="btn btn-primary" @onclick="Start">Start</button>
+<button class="btn btn-primary" @onclick="Stop">Stop</button>
+
+@code {
+
+    private bool _isRunning { get; set; }
+    public bool HideIsRunning => !_isRunning;
+    
+    protected override void OnInitialized()
+    {
+        _isRunning = _customBackgroundService.IsRunning;
+        base.OnInitialized();
+    }
+
+    private async Task Start()
+    {
+        if(!_customBackgroundService.IsRunning)
+            await _customBackgroundService.StartAsync(new System.Threading.CancellationToken());
+        _isRunning = _customBackgroundService.IsRunning;
+
+    }
+    
+    private async Task Stop()
+    {
+        if(_customBackgroundService.IsRunning)
+            await _customBackgroundService.StopAsync(new System.Threading.CancellationToken());
+        _isRunning = _customBackgroundService.IsRunning;
+
+    }
+}
